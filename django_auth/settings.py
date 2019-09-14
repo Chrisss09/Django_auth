@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -119,7 +120,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
 try:
-    from .local_settings.py import *
+    from .local_settings import SECRET_KEY
 except ImportError:
     pass
