@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib import auth, messages
-from accounts.forms import UserLoginForm
+from django.contrib.auth.decorators import login_required
+from accounts.forms import UserLoginForm, UserRegistrationForm
 
 def index(request):
     """Return HTML file"""
     return render(request, 'index.html')
 
+@login_required
 def logout(request):
     """Logs user out"""
     auth.logout(request)
@@ -14,6 +16,8 @@ def logout(request):
 
 def login(request):
     """Login page"""
+    if request.user.is_authenticated:
+        return redirect(reverse('index'))
     if request.method == 'POST':
         login_form = UserLoginForm(request.POST)
 
@@ -23,8 +27,14 @@ def login(request):
             if user:
                 auth.login(user=user, request=request)
                 messages.success(request, "You have successfully logged in")
+                return redirect(reverse('index'))
             else:
                 login_form.add_error(None, "Your username or password is incorrect!")
     else:
         login_form = UserLoginForm()
     return render(request, 'login.html', {'login_form': login_form})
+
+def register(request):
+    """Registration page"""
+    registration_form = UserRegistrationForm()
+    return render(request, 'register.html', {'registration_form': registration_form})
